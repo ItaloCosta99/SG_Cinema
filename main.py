@@ -2,6 +2,8 @@ from xml.dom.minidom import Identified
 import psycopg2 as db
 
 errorString = "Error:"
+
+
 class Config:
     def __init__(self):
         self.configs = {
@@ -67,7 +69,7 @@ class Usuario(Connection):
                   street varchar(80),
                   district varchar(40),
                   number int,
-                  tel_number int,
+                  tel_number bigint,
                   user_type varchar(40),
                   PRIMARY KEY(cpf)
                 )"""
@@ -78,7 +80,7 @@ class Usuario(Connection):
 
     def insert(self, *args):
         try:
-            sql = "INSERT INTO usuario (name, cpf, ) VALUES (%s, %s)"
+            sql = "INSERT INTO usuario (name, cpf, password, street, district, number, tel_number, user_type) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
             self.execute(sql, args)
             self.commit()
         except Exception as e:
@@ -89,7 +91,7 @@ if __name__ == "__main__":
     usuario = Usuario()
     usuario.create()
     usuario.insert(
-        "Italo", '12345678912')
+        'Italo', '12345678912', 'senha', 'Rua Tal', 'Centro', 0, 99999999999, 'cliente')
 
 """ conexao = db.connect(
     host="localhost",

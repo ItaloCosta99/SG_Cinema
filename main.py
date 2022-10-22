@@ -1,9 +1,7 @@
 import psycopg2 as db
-
-
 class Config:
     def __init__(self):
-        self.config = {
+        self.configs = {
             "postgres": {
                 "user": "postgres",
                 "password": "postgres",
@@ -17,7 +15,7 @@ class Connection(Config):
     def __init__(self):
         Config.__init__(self)
         try:
-            self.conn = db.connect(**self.config["postgres"])
+            self.conn = db.connect(**self.configs["postgres"])
             self.cur = self.conn.cursor()
         except Exception as e:
             print("Error:", e)

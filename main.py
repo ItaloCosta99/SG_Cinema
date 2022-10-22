@@ -62,7 +62,7 @@ class Usuario(Connection):
         try:
             sql = """CREATE TABLE IF NOT EXISTS usuario(
                   name varchar(100),
-                  cpf char(11),
+                  cpf varchar(11),
                   password varchar(20) UNIQUE,
                   street varchar(80),
                   district varchar(40),
@@ -78,7 +78,7 @@ class Usuario(Connection):
 
     def insert(self, *args):
         try:
-            sql = "INSERT INTO usuario (name, cpf) VALUES (%s, %s)"
+            sql = "INSERT INTO usuario (name, cpf, ) VALUES (%s, %s)"
             self.execute(sql, args)
             self.commit()
         except Exception as e:

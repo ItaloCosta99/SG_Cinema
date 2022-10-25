@@ -1,4 +1,5 @@
 import string
+from unicodedata import category
 from unittest import result
 from xml.dom.minidom import Identified
 import psycopg2 as db
@@ -85,6 +86,7 @@ class Usuario(Connection):
             sql = "INSERT INTO usuario (nome, cpf, senha, rua, bairro, numero, tel_numero, tipo_usuario) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
             self.execute(sql, args)
             self.commit()
+            return "Usuário Cadastrado com Sucesso..."
         except Exception as e:
             print("Inserir Usuário", errorString, e)
 
@@ -123,6 +125,7 @@ class Usuario(Connection):
 
 
 class Filme(Connection):
+    # @params nome, dublagem, legenda, duracao, direcao
     def __init__(self):
         Connection.__init__(self)
 
@@ -134,7 +137,7 @@ class Filme(Connection):
                 dublagem VARCHAR(20) DEFAULT 'Português',
                 legenda VARCHAR(3) DEFAULT 'Não',
                 duracao TIME,
-                direcao varchar(30)
+                direcao VARCHAR(30)
               )"""
             self.execute(sql, args)
             self.commit()
@@ -143,10 +146,11 @@ class Filme(Connection):
 
     def insert(self, *args):
         try:
-            sql = """INSERT INTO filme (name, dublagem, legenda, duracao, direcao) 
+            sql = """INSERT INTO filme (nome, dublagem, legenda, duracao, direcao) 
             VALUES (%s, %s, %s, %s, %s)"""
             self.execute(sql, args)
             self.commit()
+            return "Cadastrado com sucesso..."
         except Exception as e:
             print("Inserir Filme", errorString, e)
 
@@ -185,6 +189,7 @@ class Filme(Connection):
 
 
 class VendaIngresso(Connection):
+    # @params valor, horario, sala
     def __init__(self):
         Connection.__init__(self)
 
@@ -194,7 +199,7 @@ class VendaIngresso(Connection):
                     cod_venda SMALLSERIAL PRIMARY KEY,
                     valor DOUBLE PRECISION CHECK (valor >= 10.0) DEFAULT 10.0,
                     horario TIME,
-                    sala int,
+                    sala int
                   )"""
             self.execute(sql, args)
             self.commit()
@@ -206,6 +211,7 @@ class VendaIngresso(Connection):
             sql = """INSERT INTO venda_ingresso (valor, horario, sala) VALUES (%s, %s, %s)"""
             self.execute(sql, args)
             self.commit()
+            return "Cadastrado com sucesso..."
         except Exception as e:
             print("Inserir Venda de Ingresso", errorString, e)
 
@@ -213,7 +219,7 @@ class VendaIngresso(Connection):
         try:
             sql_s = f"SELECT * FROM venda_ingresso WHERE cod_venda = '{cod_venda}'"
             if not self.query(sql_s):
-                return "Usuário não encontrado"
+                return "Venda não encontrada"
             sql_d = f"DELETE FROM venda_ingresso WHERE cod_venda = '{cod_venda}'"
             self.execute(sql_d)
             self.commit()
@@ -236,12 +242,13 @@ class VendaIngresso(Connection):
             data = self.query(sql, args)
             if data:
                 return data
-            return "Usuário não encontrado"
+            return "Venda não encontrada"
         except Exception as e:
             print("Atualizar Usuário", errorString, e)
 
 
 class Sala(Connection):
+    # @params cod_sala, capacidade_max, categoria_sala
     def __init__(self):
         Connection.__init__(self)
 
@@ -262,6 +269,7 @@ class Sala(Connection):
             sql = "INSERT INTO sala (cod_sala, capacidade_max, categoria_sala) VALUES (%s, %s, %s)"
             self.execute(sql, args)
             self.commit()
+            return "Cadastrado com sucesso..."
         except Exception as e:
             print("Inserir dados da Sala", errorString, e)
 
@@ -298,26 +306,120 @@ class Sala(Connection):
 
 
 if __name__ == "__main__":
-    """ usuario = Usuario()
-    usuario.insert(
-        'Italo', '12345678912', 'senha', 'Rua Tal', 'Centro', 0, 99999999999, 'cliente') """
-    sala = Sala()
-    print(sala.search(1))
+    whileInit = 1
+    while whileInit != 0:
+        print("--- Menu ---")
+        print("1 - Cadastrar Usuario\n2 - Cadastrar Filme\n3 - Cadastrar Venda de Ingresso\n4 - Cadastrar Sala\n5 - Login Usuário\n0 - Sair")
+        userOp = input("Escolha uma opção: ")
+        if int(userOp) == 1:
+            x = int(0)
+            objTipoUsuario = {1: 'Cliente', 2: 'Funcionario'}
+            txtCadastro = ["Digite seu nome:", "Digite seu CPF:", "Digite sua Senha:", "Digite sua Rua:", "Digite seu Bairro:",
+                           "Digite o Número da sua Residência:", "Digite seu Número de Telefone:", "Digite o Tipo do Usuário('Cliente' ou 'Funcionário'):"]
+            txtCadastroLength = len(txtCadastro)
+            user = Usuario()
+            user.create()
+            while x < txtCadastroLength:
+                if x == 0:
+                    nome = input(txtCadastro[x])
+                if x == 1:
+                    cpf = input(txtCadastro[x])
+                if x == 2:
+                    senha = input(txtCadastro[x])
+                if x == 3:
+                    rua = input(txtCadastro[x])
+                if x == 4:
+                    bairro = input(txtCadastro[x])
+                if x == 5:
+                    numero = input(txtCadastro[x])
+                if x == 6:
+                    tel_numero = input(txtCadastro[x])
+                if x == 7:
+                    print("1 - Cliente\n2 - Funcionário")
+                    tipoOp = input(txtCadastro[x])
+                    tipo_usuario = objTipoUsuario.get(int(tipoOp), 'Cliente')
+                if x == 8:
+                    print(user.insert(nome, int(cpf), senha, rua, bairro,
+                                      int(numero), int(tel_numero), tipo_usuario))
+                    break
 
-""" conexao = db.connect(
-    host="localhost",
-    database="teste",
-    port=5432,
-    user="postgres",
-    password="postgres")
-# Criando um cursor
-cursor = conexao.cursor()
-# Realizando a consulta na tabela do postgres
-cursor.execute("SELECT * FROM aluno")
-# Pega o resultset como uma tupla
+                x += 1
 
-result = cursor.fetchall()
+        if int(userOp) == 2:
+            x = int(0)
+            txtFilme = ["Digite o nome do filme:", "Digite a dublagem:",
+                        "Digite a legenda:", "Digite a duração (hh:mm:ss):", "Digite a direção:"]
+            txtFilmeLength = len(txtFilme)
+            movie = Filme()
+            movie.create()
+            while x < txtFilmeLength:
+                if x == 0:
+                    nome = input(txtFilme[x])
+                if x == 1:
+                    dublagem = input(txtFilme[x])
+                if x == 2:
+                    legenda = input(txtFilme[x])
+                if x == 3:
+                    print(txtFilme[x])
+                    h = input("Horas (hh): ")
+                    m = input("Minutos (mm): ")
+                    s = input("Segundos (ss): ")
+                    duracao = f'{int(h):02d}:{int(m):02d}:{int(s):02d}'
+                if x == 4:
+                    direcao = input(txtFilme[x])
+                if x == 5:
+                    print(movie.insert(nome, dublagem, legenda, duracao, direcao))
+                    break
 
-# Navega pelo resultset
-for record in result:
-    print(record[0], "-->", record[1]) """
+                x += 1
+
+        if int(userOp) == 3:
+            # @params valor, horario, sala
+            x = int(0)
+            txtVenda = ["Digite o valor do ingresso:",
+                        "Digite o horário que a Sala estará aberta:", "Digite o numero da sala:"]
+            txtVendaLength = len(txtVenda)
+            venda = VendaIngresso()
+            venda.create()
+            while x < txtVendaLength:
+                if x == 0:
+                    valor = input(txtVenda[x])
+                    # Formatação útil para a exibição posteriormente
+                    # valorFormatado = "R${:,.2f}".format(float(valor)).replace(",", "X").replace(".", ",").replace("X", ".")
+                if x == 1:
+                    print(txtVenda[x])
+                    h = input("Horas (hh): ")
+                    m = input("Minutos (mm): ")
+                    s = input("Segundos (ss): ")
+                    horario = f'{int(h):02d}:{int(m):02d}:{int(s):02d}'
+                if x == 2:
+                    sala = input(txtVenda[x])
+                    print(venda.insert(float(valor), horario, int(sala)))
+                    break
+
+                x += 1
+        if int(userOp) == 4:
+            x = int(0)
+            objCategorias = {1: 'imax', 2: 'standard', 3: 'deluxe'}
+            txtSala = ["Digite o código da sala:",
+                       "Digite a capacidade máxima:", "Digite a categoria da sala:"]
+            txtSalaLength = len(txtSala)
+            sala = Sala()
+            sala.create()
+            while x < txtSalaLength:
+                if x == 0:
+                    cod_sala = input(txtSala[x])
+                if x == 1:
+                    capacidade_max = input(txtSala[x])
+                if x == 2:
+                    print("Categorias:\n1 - Imax\n2 - Standard\n3 - Deluxe")
+                    categoryOp = input(txtSala[x])
+                    categoria = objCategorias.get(int(categoryOp), 'standard')
+                    print(sala.insert(int(cod_sala), int(
+                        capacidade_max), categoria))
+                    break
+
+                x += 1
+        if int(userOp) == 0:
+            print("Encerrando...")
+            break

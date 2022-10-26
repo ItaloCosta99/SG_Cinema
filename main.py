@@ -123,6 +123,16 @@ class Usuario(Connection):
         except Exception as e:
             print("Atualizar Usuário", errorString, e)
 
+    def login(self, *args):
+        try:
+            sql = "SELECT * FROM usuario WHERE nome = %s and senha = %s"
+            data = self.query(sql, args)
+            if data:
+                return {'login': True, 'data': data}
+            return {'login': False, 'data': 'Usuário não encontrado'}
+        except Exception as e:
+            print("Login Usuário", errorString, e)
+
 
 class Filme(Connection):
     # @params nome, dublagem, legenda, duracao, direcao
@@ -306,120 +316,152 @@ class Sala(Connection):
 
 
 if __name__ == "__main__":
-    whileInit = 1
+    isLogged = False
+    whileInit = int(1)
     while whileInit != 0:
-        print("--- Menu ---")
-        print("1 - Cadastrar Usuario\n2 - Cadastrar Filme\n3 - Cadastrar Venda de Ingresso\n4 - Cadastrar Sala\n5 - Login Usuário\n0 - Sair")
-        userOp = input("Escolha uma opção: ")
-        if int(userOp) == 1:
-            x = int(0)
-            objTipoUsuario = {1: 'Cliente', 2: 'Funcionario'}
-            txtCadastro = ["Digite seu nome:", "Digite seu CPF:", "Digite sua Senha:", "Digite sua Rua:", "Digite seu Bairro:",
-                           "Digite o Número da sua Residência:", "Digite seu Número de Telefone:", "Digite o Tipo do Usuário('Cliente' ou 'Funcionário'):"]
-            txtCadastroLength = len(txtCadastro)
-            user = Usuario()
-            user.create()
-            while x < txtCadastroLength:
-                if x == 0:
-                    nome = input(txtCadastro[x])
-                if x == 1:
-                    cpf = input(txtCadastro[x])
-                if x == 2:
-                    senha = input(txtCadastro[x])
-                if x == 3:
-                    rua = input(txtCadastro[x])
-                if x == 4:
-                    bairro = input(txtCadastro[x])
-                if x == 5:
-                    numero = input(txtCadastro[x])
-                if x == 6:
-                    tel_numero = input(txtCadastro[x])
-                if x == 7:
-                    print("1 - Cliente\n2 - Funcionário")
-                    tipoOp = input(txtCadastro[x])
-                    tipo_usuario = objTipoUsuario.get(int(tipoOp), 'Cliente')
-                if x == 8:
-                    print(user.insert(nome, int(cpf), senha, rua, bairro,
-                                      int(numero), int(tel_numero), tipo_usuario))
+        if isLogged == False:
+            print("--- Menu ---")
+            print("1 - Cadastrar Usuario\n2 - Login Usuário\n0 - Sair")
+            userOp = input("Escolha uma opção: ")
+            if int(userOp) == 1:
+                x = int(0)
+                objTipoUsuario = {1: 'Cliente', 2: 'Funcionario'}
+                txtCadastro = ["Digite seu nome:", "Digite seu CPF:", "Digite sua Senha:", "Digite sua Rua:", "Digite seu Bairro:",
+                               "Digite o Número da sua Residência:", "Digite seu Número de Telefone:", "Digite o Tipo do Usuário('Cliente' ou 'Funcionário'):"]
+                txtCadastroLength = len(txtCadastro)
+                user = Usuario()
+                user.create()
+                while x < txtCadastroLength:
+                    if x == 0:
+                        nome = input(txtCadastro[x])
+                    if x == 1:
+                        cpf = input(txtCadastro[x])
+                    if x == 2:
+                        senha = input(txtCadastro[x])
+                    if x == 3:
+                        rua = input(txtCadastro[x])
+                    if x == 4:
+                        bairro = input(txtCadastro[x])
+                    if x == 5:
+                        numero = input(txtCadastro[x])
+                    if x == 6:
+                        tel_numero = input(txtCadastro[x])
+                    if x == 7:
+                        print("1 - Cliente\n2 - Funcionário")
+                        tipoOp = input(txtCadastro[x])
+                        tipo_usuario = objTipoUsuario.get(
+                            int(tipoOp), 'Cliente')
+                    if x == 8:
+                        print(user.insert(nome, int(cpf), senha, rua, bairro,
+                                          int(numero), int(tel_numero), tipo_usuario))
+                        break
+
+                    x += 1
+
+            if int(userOp) == 2:
+                txtLogin = ['Insira o Username:', 'Insira a sua senha:']
+                username = input(txtLogin[0])
+                password = input(txtLogin[1])
+                user = Usuario()
+                loginResponse = user.login(username, password)
+                if loginResponse.get('login'):
+                    isLogged = True
+                    nome = loginResponse.get('data')[0][0]
+                    cpf = loginResponse.get('data')[0][1]
+
+                    print("\nLogado com Sucesso")
+                    print(f"Usuário: {nome}\nCpf: {cpf}")
+                else:
+                    print(loginResponse.get('data'))
+
+            if int(userOp) == 0:
+                print("Encerrando...")
+                break
+
+        else:
+            userOpLogged = int(1)
+
+            while userOpLogged != 0:
+                print(
+                    "1 - Cadastrar Filme:\n2 - Cadastrar Ingresso:\n3 - Cadastrar Sala:\n0 - Voltar para o menu inicial")
+                userOpLogged = input("Escolha uma opção: ")
+                if int(userOpLogged) == 1:
+                    x = int(0)
+                    txtFilme = ["Digite o nome do filme:", "Digite a dublagem:",
+                                "Digite a legenda:", "Digite a duração (hh:mm:ss):", "Digite a direção:"]
+                    txtFilmeLength = len(txtFilme)
+                    movie = Filme()
+                    movie.create()
+                    while x < txtFilmeLength:
+                        if x == 0:
+                            nome = input(txtFilme[x])
+                        if x == 1:
+                            dublagem = input(txtFilme[x])
+                        if x == 2:
+                            legenda = input(txtFilme[x])
+                        if x == 3:
+                            print(txtFilme[x])
+                            h = input("Horas (hh): ")
+                            m = input("Minutos (mm): ")
+                            s = input("Segundos (ss): ")
+                            duracao = f'{int(h):02d}:{int(m):02d}:{int(s):02d}'
+                        if x == 4:
+                            direcao = input(txtFilme[x])
+                        if x == 5:
+                            print(movie.insert(nome, dublagem,
+                                  legenda, duracao, direcao))
+                            break
+
+                        x += 1
+                if int(userOpLogged) == 2:
+                    # @params valor, horario, sala
+                    x = int(0)
+                    txtVenda = ["Digite o valor do ingresso:",
+                                "Digite o horário que a Sala estará aberta:", "Digite o numero da sala:"]
+                    txtVendaLength = len(txtVenda)
+                    venda = VendaIngresso()
+                    venda.create()
+                    while x < txtVendaLength:
+                        if x == 0:
+                            valor = input(txtVenda[x])
+                            # Formatação útil para a exibição posteriormente
+                            # valorFormatado = "R${:,.2f}".format(float(valor)).replace(",", "X").replace(".", ",").replace("X", ".")
+                        if x == 1:
+                            print(txtVenda[x])
+                            h = input("Horas (hh): ")
+                            m = input("Minutos (mm): ")
+                            s = input("Segundos (ss): ")
+                            horario = f'{int(h):02d}:{int(m):02d}:{int(s):02d}'
+                        if x == 2:
+                            sala = input(txtVenda[x])
+                            print(venda.insert(float(valor), horario, int(sala)))
+                            break
+
+                        x += 1
+                if int(userOpLogged) == 3:
+                    x = int(0)
+                    objCategorias = {1: 'imax', 2: 'standard', 3: 'deluxe'}
+                    txtSala = ["Digite o código da sala:",
+                               "Digite a capacidade máxima:", "Digite a categoria da sala:"]
+                    txtSalaLength = len(txtSala)
+                    sala = Sala()
+                    sala.create()
+                    while x < txtSalaLength:
+                        if x == 0:
+                            cod_sala = input(txtSala[x])
+                        if x == 1:
+                            capacidade_max = input(txtSala[x])
+                        if x == 2:
+                            print("Categorias:\n1 - Imax\n2 - Standard\n3 - Deluxe")
+                            categoryOp = input(txtSala[x])
+                            categoria = objCategorias.get(
+                                int(categoryOp), 'standard')
+                            print(sala.insert(int(cod_sala), int(
+                                capacidade_max), categoria))
+                            break
+
+                        x += 1
+                if int(userOpLogged) == 0:
+                    print("Encerrando...")
+                    isLogged = False
                     break
-
-                x += 1
-
-        if int(userOp) == 2:
-            x = int(0)
-            txtFilme = ["Digite o nome do filme:", "Digite a dublagem:",
-                        "Digite a legenda:", "Digite a duração (hh:mm:ss):", "Digite a direção:"]
-            txtFilmeLength = len(txtFilme)
-            movie = Filme()
-            movie.create()
-            while x < txtFilmeLength:
-                if x == 0:
-                    nome = input(txtFilme[x])
-                if x == 1:
-                    dublagem = input(txtFilme[x])
-                if x == 2:
-                    legenda = input(txtFilme[x])
-                if x == 3:
-                    print(txtFilme[x])
-                    h = input("Horas (hh): ")
-                    m = input("Minutos (mm): ")
-                    s = input("Segundos (ss): ")
-                    duracao = f'{int(h):02d}:{int(m):02d}:{int(s):02d}'
-                if x == 4:
-                    direcao = input(txtFilme[x])
-                if x == 5:
-                    print(movie.insert(nome, dublagem, legenda, duracao, direcao))
-                    break
-
-                x += 1
-
-        if int(userOp) == 3:
-            # @params valor, horario, sala
-            x = int(0)
-            txtVenda = ["Digite o valor do ingresso:",
-                        "Digite o horário que a Sala estará aberta:", "Digite o numero da sala:"]
-            txtVendaLength = len(txtVenda)
-            venda = VendaIngresso()
-            venda.create()
-            while x < txtVendaLength:
-                if x == 0:
-                    valor = input(txtVenda[x])
-                    # Formatação útil para a exibição posteriormente
-                    # valorFormatado = "R${:,.2f}".format(float(valor)).replace(",", "X").replace(".", ",").replace("X", ".")
-                if x == 1:
-                    print(txtVenda[x])
-                    h = input("Horas (hh): ")
-                    m = input("Minutos (mm): ")
-                    s = input("Segundos (ss): ")
-                    horario = f'{int(h):02d}:{int(m):02d}:{int(s):02d}'
-                if x == 2:
-                    sala = input(txtVenda[x])
-                    print(venda.insert(float(valor), horario, int(sala)))
-                    break
-
-                x += 1
-        if int(userOp) == 4:
-            x = int(0)
-            objCategorias = {1: 'imax', 2: 'standard', 3: 'deluxe'}
-            txtSala = ["Digite o código da sala:",
-                       "Digite a capacidade máxima:", "Digite a categoria da sala:"]
-            txtSalaLength = len(txtSala)
-            sala = Sala()
-            sala.create()
-            while x < txtSalaLength:
-                if x == 0:
-                    cod_sala = input(txtSala[x])
-                if x == 1:
-                    capacidade_max = input(txtSala[x])
-                if x == 2:
-                    print("Categorias:\n1 - Imax\n2 - Standard\n3 - Deluxe")
-                    categoryOp = input(txtSala[x])
-                    categoria = objCategorias.get(int(categoryOp), 'standard')
-                    print(sala.insert(int(cod_sala), int(
-                        capacidade_max), categoria))
-                    break
-
-                x += 1
-        if int(userOp) == 0:
-            print("Encerrando...")
-            break

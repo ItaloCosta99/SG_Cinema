@@ -261,6 +261,7 @@ class Sala(Connection):
         Connection.__init__(self)
 
     def create(self, *args):
+        # categoria é um tipo personalizado, trata-se de um enum(lista) com os valores: standard, imax e deluxe
         try:
             sql = """CREATE TABLE IF NOT EXISTS sala(
               cod_sala INT PRIMARY KEY,
@@ -350,8 +351,7 @@ if __name__ == "__main__":
                         tipoOp = input(txtCadastro[x])
                         tipo_usuario = objTipoUsuario.get(
                             int(tipoOp), 'Cliente')
-                    if x == 8:
-                        print(user.insert(nome, int(cpf), senha, rua, bairro,
+                        print(user.insert(nome, cpf, senha, rua, bairro,
                                           int(numero), int(tel_numero), tipo_usuario))
                         break
 
@@ -412,7 +412,6 @@ if __name__ == "__main__":
                             print(movie.insert(nome, dublagem,
                                   legenda, duracao, direcao))
                             break
-
                         x += 1
                 # Cadastro de Venda de Ingresso
                 if int(userOpLogged) == 2:

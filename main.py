@@ -6,7 +6,7 @@ import psycopg2 as db
 
 errorString = "Error:"
 
-
+# Classe de configurações
 class Config:
     def __init__(self):
         self.configs = {
@@ -19,7 +19,7 @@ class Config:
             }
         }
 
-
+# Classe de Conexão com o banco
 class Connection(Config):
     def __init__(self):
         Config.__init__(self)
@@ -58,8 +58,9 @@ class Connection(Config):
         self.cursor.execute(sql, params or ())
         return self.fetchall()
 
-
+# Classe Usuario
 class Usuario(Connection):
+    # @params nome, cpf, senha, rua, bairro, numero, tel_numero, tipo_usuario
     def __init__(self):
         Connection.__init__(self)
 
@@ -125,7 +126,7 @@ class Usuario(Connection):
 
     def login(self, *args):
         try:
-            sql = "SELECT * FROM usuario WHERE nome = %s and senha = %s"
+            sql = "SELECT * FROM usuario WHERE nome = %s AND senha = %s"
             data = self.query(sql, args)
             if data:
                 return {'login': True, 'data': data}
@@ -133,7 +134,7 @@ class Usuario(Connection):
         except Exception as e:
             print("Login Usuário", errorString, e)
 
-
+# Classe Filme
 class Filme(Connection):
     # @params nome, dublagem, legenda, duracao, direcao
     def __init__(self):
@@ -197,7 +198,7 @@ class Filme(Connection):
         except Exception as e:
             print("Pesquisar Filme", errorString, e)
 
-
+# Classe Venda de Ingresso
 class VendaIngresso(Connection):
     # @params valor, horario, sala
     def __init__(self):
@@ -256,7 +257,7 @@ class VendaIngresso(Connection):
         except Exception as e:
             print("Atualizar Usuário", errorString, e)
 
-
+# Classe de Sala
 class Sala(Connection):
     # @params cod_sala, capacidade_max, categoria_sala
     def __init__(self):
@@ -323,6 +324,7 @@ if __name__ == "__main__":
             print("--- Menu ---")
             print("1 - Cadastrar Usuario\n2 - Login Usuário\n0 - Sair")
             userOp = input("Escolha uma opção: ")
+            # Cadastro de Usuário
             if int(userOp) == 1:
                 x = int(0)
                 objTipoUsuario = {1: 'Cliente', 2: 'Funcionario'}
@@ -357,7 +359,7 @@ if __name__ == "__main__":
                         break
 
                     x += 1
-
+            # Login
             if int(userOp) == 2:
                 txtLogin = ['Insira o Username:', 'Insira a sua senha:']
                 username = input(txtLogin[0])
@@ -385,6 +387,8 @@ if __name__ == "__main__":
                 print(
                     "1 - Cadastrar Filme:\n2 - Cadastrar Ingresso:\n3 - Cadastrar Sala:\n0 - Voltar para o menu inicial")
                 userOpLogged = input("Escolha uma opção: ")
+
+                # Cadastro de Filme
                 if int(userOpLogged) == 1:
                     x = int(0)
                     txtFilme = ["Digite o nome do filme:", "Digite a dublagem:",
@@ -413,6 +417,7 @@ if __name__ == "__main__":
                             break
 
                         x += 1
+                # Cadastro de Venda de Ingresso
                 if int(userOpLogged) == 2:
                     # @params valor, horario, sala
                     x = int(0)
@@ -438,6 +443,7 @@ if __name__ == "__main__":
                             break
 
                         x += 1
+                # Cadastro de Sala
                 if int(userOpLogged) == 3:
                     x = int(0)
                     objCategorias = {1: 'imax', 2: 'standard', 3: 'deluxe'}

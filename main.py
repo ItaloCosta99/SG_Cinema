@@ -4,6 +4,8 @@ import psycopg2 as db
 errorString = "Error:"
 
 # Classe de configurações
+
+
 class Config:
     def __init__(self):
         self.configs = {
@@ -17,6 +19,8 @@ class Config:
         }
 
 # Classe de Conexão com o banco
+
+
 class Connection(Config):
     def __init__(self):
         Config.__init__(self)
@@ -56,6 +60,8 @@ class Connection(Config):
         return self.fetchall()
 
 # Classe Usuario
+
+
 class Usuario(Connection):
     # @params nome, cpf, senha, rua, bairro, numero, tel_numero, tipo_usuario
     def __init__(self):
@@ -132,6 +138,8 @@ class Usuario(Connection):
             print("Login Usuário", errorString, e)
 
 # Classe Filme
+
+
 class Filme(Connection):
     # @params nome, dublagem, legenda, duracao, direcao
     def __init__(self):
@@ -196,6 +204,8 @@ class Filme(Connection):
             print("Pesquisar Filme", errorString, e)
 
 # Classe Venda de Ingresso
+
+
 class VendaIngresso(Connection):
     # @params valor, horario, sala
     def __init__(self):
@@ -255,6 +265,8 @@ class VendaIngresso(Connection):
             print("Atualizar Usuário", errorString, e)
 
 # Classe de Sala
+
+
 class Sala(Connection):
     # @params cod_sala, capacidade_max, categoria_sala
     def __init__(self):

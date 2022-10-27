@@ -1,7 +1,4 @@
 import string
-from unicodedata import category
-from unittest import result
-from xml.dom.minidom import Identified
 import psycopg2 as db
 
 errorString = "Error:"

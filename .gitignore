@@ -6100,3 +6100,4 @@
 .venv/bin/activate/Scripts/python.exe
 .venv/bin/activate/Scripts/pythonw.exe
 .venv/share/man/man1/ttx.1
+__pycache__/sql_config.cpython-310.pyc

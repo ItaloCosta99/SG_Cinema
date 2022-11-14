@@ -1,7 +1,9 @@
 import string
 import psycopg2 as db
+from sql_config import sql as sqlInit
 
 errorString = "Error:"
+successString = "Cadastrado com sucesso..."
 
 # Classe de configurações
 
@@ -90,7 +92,7 @@ class Usuario(Connection):
             sql = "INSERT INTO usuario (nome, cpf, senha, rua, bairro, numero, tel_numero, tipo_usuario) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
             self.execute(sql, args)
             self.commit()
-            return "Usuário Cadastrado com Sucesso..."
+            return successString
         except Exception as e:
             print("Inserir Usuário", errorString, e)
 
@@ -129,7 +131,7 @@ class Usuario(Connection):
 
     def login(self, *args):
         try:
-            sql = "SELECT * FROM usuario WHERE nome = %s AND senha = %s"
+            sql = "SELECT * FROM usuario WHERE cpf = %s AND senha = %s"
             data = self.query(sql, args)
             if data:
                 return {'login': True, 'data': data}
@@ -141,7 +143,7 @@ class Usuario(Connection):
 
 
 class Filme(Connection):
-    # @params nome, dublagem, legenda, duracao, direcao
+    # @params nome, dublagem, legenda, duracao, direcao, genero
     def __init__(self):
         Connection.__init__(self)
 
@@ -162,11 +164,11 @@ class Filme(Connection):
 
     def insert(self, *args):
         try:
-            sql = """INSERT INTO filme (nome, dublagem, legenda, duracao, direcao) 
-            VALUES (%s, %s, %s, %s, %s)"""
+            sql = """INSERT INTO filme (nome, dublagem, legenda, duracao, direcao, gerero) 
+            VALUES (%s, %s, %s, %s, %s, %s)"""
             self.execute(sql, args)
             self.commit()
-            return "Cadastrado com sucesso..."
+            return successString
         except Exception as e:
             print("Inserir Filme", errorString, e)
 
@@ -216,6 +218,7 @@ class VendaIngresso(Connection):
             sql = """CREATE TABLE IF NOT EXISTS venda_ingresso(
                     cod_venda SMALLSERIAL PRIMARY KEY,
                     valor DOUBLE PRECISION CHECK (valor >= 10.0) DEFAULT 10.0,
+                    valor_meia DOUBLE PRECISION DEFAULT (valor / 2)
                     horario TIME,
                     sala int
                   )"""
@@ -229,7 +232,7 @@ class VendaIngresso(Connection):
             sql = """INSERT INTO venda_ingresso (valor, horario, sala) VALUES (%s, %s, %s)"""
             self.execute(sql, args)
             self.commit()
-            return "Cadastrado com sucesso..."
+            return successString
         except Exception as e:
             print("Inserir Venda de Ingresso", errorString, e)
 
@@ -290,7 +293,7 @@ class Sala(Connection):
             sql = "INSERT INTO sala (cod_sala, capacidade_max, categoria_sala) VALUES (%s, %s, %s)"
             self.execute(sql, args)
             self.commit()
-            return "Cadastrado com sucesso..."
+            return successString
         except Exception as e:
             print("Inserir dados da Sala", errorString, e)
 
@@ -327,6 +330,10 @@ class Sala(Connection):
 
 
 if __name__ == "__main__":
+    initCon = Connection()
+    initCon.execute(sqlInit)
+    initCon.commit()
+    
     isLogged = False
     whileInit = int(1)
     while whileInit != 0:
@@ -342,7 +349,6 @@ if __name__ == "__main__":
                                "Digite o Número da sua Residência:", "Digite seu Número de Telefone:", "Digite o Tipo do Usuário('Cliente' ou 'Funcionário'):"]
                 txtCadastroLength = len(txtCadastro)
                 user = Usuario()
-                user.create()
                 while x < txtCadastroLength:
                     if x == 0:
                         nome = input(txtCadastro[x])
@@ -370,11 +376,11 @@ if __name__ == "__main__":
                     x += 1
             # Login
             if int(userOp) == 2:
-                txtLogin = ['Insira o Username:', 'Insira a sua senha:']
-                username = input(txtLogin[0])
+                txtLogin = ['Insira o CPF:', 'Insira a sua senha:']
+                cpf = input(txtLogin[0])
                 password = input(txtLogin[1])
                 user = Usuario()
-                loginResponse = user.login(username, password)
+                loginResponse = user.login(cpf, password)
                 if loginResponse.get('login'):
                     isLogged = True
                     nome = loginResponse.get('data')[0][0]
@@ -404,7 +410,6 @@ if __name__ == "__main__":
                                 "Digite a legenda:", "Digite a duração (hh:mm:ss):", "Digite a direção:"]
                     txtFilmeLength = len(txtFilme)
                     movie = Filme()
-                    movie.create()
                     while x < txtFilmeLength:
                         if x == 0:
                             nome = input(txtFilme[x])
@@ -420,7 +425,6 @@ if __name__ == "__main__":
                             duracao = f'{int(h):02d}:{int(m):02d}:{int(s):02d}'
                         if x == 4:
                             direcao = input(txtFilme[x])
-                        if x == 5:
                             print(movie.insert(nome, dublagem,
                                   legenda, duracao, direcao))
                             break
@@ -433,7 +437,6 @@ if __name__ == "__main__":
                                 "Digite o horário que a Sala estará aberta:", "Digite o numero da sala:"]
                     txtVendaLength = len(txtVenda)
                     venda = VendaIngresso()
-                    venda.create()
                     while x < txtVendaLength:
                         if x == 0:
                             valor = input(txtVenda[x])
@@ -459,7 +462,6 @@ if __name__ == "__main__":
                                "Digite a capacidade máxima:", "Digite a categoria da sala:"]
                     txtSalaLength = len(txtSala)
                     sala = Sala()
-                    sala.create()
                     while x < txtSalaLength:
                         if x == 0:
                             cod_sala = input(txtSala[x])

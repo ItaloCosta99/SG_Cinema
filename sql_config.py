@@ -1,9 +1,10 @@
 sql = """CREATE TABLE IF NOT EXISTS usuario(
+  cpf bigint UNIQUE,
   nome VARCHAR(100),
-  cpf bigint,
   senha VARCHAR(20) UNIQUE,
   rua VARCHAR(80),
   bairro VARCHAR(40),
+  complemento VARCHAR(40),
   numero INT,
   PRIMARY KEY(cpf)
 );
@@ -58,7 +59,8 @@ CREATE TABLE IF NOT EXISTS filme(
   dublagem VARCHAR(20) DEFAULT 'Português',
   legenda VARCHAR(3) DEFAULT 'Não',
   duracao TIME,
-  direcao VARCHAR(30)
+  direcao VARCHAR(30),
+  genero VARCHAR(30)
 );
 
 CREATE TABLE IF NOT EXISTS cinema(

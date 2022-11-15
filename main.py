@@ -151,6 +151,20 @@ class Usuario(Connection):
         except Exception as e:
             print("Atualizar Usuário", errorString, e)
 
+    def find_all(self):
+        try:
+            sql = "SELECT * FROM usuario"
+            data = self.query(sql)
+            lines = ""
+            if data:
+                for line in data:
+                    lines += "CPF: {0[0]} | Nome: {0[1]} | Senha: {0[2]} | Rua: {0[3]} | Bairro: {0[4]} | Complemento: {0[5]} | Número: {0[6]}".format(
+                        line)
+                return lines
+            return "Usuário não encontrado"
+        except Exception as e:
+            print("Pesquisar Usuário", errorString, e)
+
     def login(self, *args):
         try:
             sql = "SELECT * FROM usuario U, funcionario F WHERE U.cpf = %s AND U.senha = %s AND U.cpf = F.cpf_usuario"
@@ -234,8 +248,9 @@ class Filme(Connection):
             lines = ""
             if data:
                 for line in data:
-                    lines += "Cod: {0[0]} | Título: {0[1]} | Dublagem: {0[2]} | Legenda: {0[3]} | Duração: {0[4]} | Direção: {0[5]} | Gênero: {0[6]}".format(line)
-                return lines 
+                    lines += "Cod: {0[0]} | Título: {0[1]} | Dublagem: {0[2]} | Legenda: {0[3]} | Duração: {0[4]} | Direção: {0[5]} | Gênero: {0[6]}".format(
+                        line)
+                return lines
             return "Filme não encontrado"
         except Exception as e:
             print("Filmes cadastrados", errorString, e)
@@ -309,10 +324,13 @@ class VendaIngresso(Connection):
             lines = ""
             if data:
                 for line in data:
-                    valorInteriaFormatado = "R${:,.2f}".format(line[1]).replace(",", "X").replace(".", ",").replace("X", ".")
-                    valorMeiaFormatado = "R${:,.2f}".format(line[1]).replace(",", "X").replace(".", ",").replace("X", ".")
-                    lines += "Cod: {0[0]} | Valor Inteira: {1} | Valor Meia: {2} | Horário: {0[3]} | Sala: {0[4]}".format(line, valorInteriaFormatado, valorMeiaFormatado)
-                return lines 
+                    valorInteriaFormatado = "R${:,.2f}".format(line[1]).replace(
+                        ",", "X").replace(".", ",").replace("X", ".")
+                    valorMeiaFormatado = "R${:,.2f}".format(line[1]).replace(
+                        ",", "X").replace(".", ",").replace("X", ".")
+                    lines += "Cod: {0[0]} | Valor Inteira: {1} | Valor Meia: {2} | Horário: {0[3]} | Sala: {0[4]}".format(
+                        line, valorInteriaFormatado, valorMeiaFormatado)
+                return lines
             return "Vendas não encontradas"
         except Exception as e:
             print("Vendas cadastrados", errorString, e)
@@ -375,8 +393,9 @@ class Sala(Connection):
             lines = ""
             if data:
                 for line in data:
-                    lines += "Cod: {0[0]} | Capacidade Máxima: {0[1]} | Categoria: {0[2]}".format(line)
-                return lines 
+                    lines += "Cod: {0[0]} | Capacidade Máxima: {0[1]} | Categoria: {0[2]}".format(
+                        line)
+                return lines
             return "Salas não encontradas"
         except Exception as e:
             print("Salas cadastradas", errorString, e)
@@ -452,7 +471,7 @@ class Sessao(Connection):
             return "Sala não encontrada"
         except Exception as e:
             print("Pesquisar Sessão", errorString, e)
-    
+
     def find_all(self):
         try:
             sql = "SELECT * FROM sessao"
@@ -460,11 +479,13 @@ class Sessao(Connection):
             lines = ""
             if data:
                 for line in data:
-                    lines += "Cod: {0[0]} | N° Sala: {0[1]} | Hora: {0[2]} | Data: {0[3]} | Faixa Etária: {0[4]} | Número: {0[5]}".format(line)
+                    lines += "Cod: {0[0]} | N° Sala: {0[1]} | Hora: {0[2]} | Data: {0[3]} | Faixa Etária: {0[4]} | Número: {0[5]}".format(
+                        line)
                 return lines
             return "Sessão não encontrado"
         except Exception as e:
             print("Pesquisar Sessão", errorString, e)
+
 
 class Cinema(Connection):
     # @params cod_sala, capacidade_max, categoria_sala
@@ -533,11 +554,13 @@ class Cinema(Connection):
             lines = ""
             if data:
                 for line in data:
-                    lines += "Cod: {0[0]} | Nome: {0[1]} | Rua: {0[2]} | Bairro: {0[3]} | Complemento: {0[4]} | Número: {0[5]}".format(line)
+                    lines += "Cod: {0[0]} | Nome: {0[1]} | Rua: {0[2]} | Bairro: {0[3]} | Complemento: {0[4]} | Número: {0[5]}".format(
+                        line)
                 return lines
             return "Cinema não encontrado"
         except Exception as e:
             print("Pesquisar Cinema", errorString, e)
+
 
 class CinemaPassaFilme(Connection):
     # @params cod_sala, capacidade_max, categoria_sala
@@ -607,7 +630,8 @@ class CinemaPassaFilme(Connection):
             lines = ""
             if data:
                 for line in data:
-                    lines += "Cod: {0[0]} | Id_Cinema: {0[1]} | Id_Filme: {0[2]} | Id_Sessao: {0[3]}".format(line)
+                    lines += "Cod: {0[0]} | Id_Cinema: {0[1]} | Id_Filme: {0[2]} | Id_Sessao: {0[3]}".format(
+                        line)
                 return lines
             return "Cinema passa filme não encontrado"
         except Exception as e:
@@ -764,15 +788,15 @@ if __name__ == "__main__":
                                   legenda, duracao, direcao, genero))
                             break
                         x += 1
-                
-                #Deletar Filme
+
+                # Deletar Filme
                 if int(userOpLogged) == 3:
                     movie = Filme()
                     print(movie.find_all())
                     cod_filme = input("Insira o Código do Filme")
                     print(movie.delete(int(cod_filme)))
 
-                #Cadastrar Ingresso
+                # Cadastrar Ingresso
                 if int(userOpLogged) == 4:
                     # @params valor, horario, sala
                     x = int(0)
@@ -797,14 +821,14 @@ if __name__ == "__main__":
                             break
 
                         x += 1
-                
-                #Editar Ingresso
+
+                # Editar Ingresso
                 if int(userOpLogged) == 5:
                     # @params valor, horario, sala
                     venda = VendaIngresso()
                     print(venda.find_all())
                     x = int(0)
-                    txtVenda = ["Digite o Código do Ingresso","Digite o valor do ingresso:",
+                    txtVenda = ["Digite o Código do Ingresso", "Digite o valor do ingresso:",
                                 "Digite o horário que a Sala estará aberta:", "Digite o numero da sala:"]
                     txtVendaLength = len(txtVenda)
                     while x < txtVendaLength:
@@ -822,12 +846,13 @@ if __name__ == "__main__":
                             horario = f'{int(h):02d}:{int(m):02d}:{int(s):02d}'
                         if x == 3:
                             sala = input(txtVenda[x])
-                            print(venda.update(int(cod_venda), float(valor), horario, int(sala)))
+                            print(venda.update(int(cod_venda),
+                                  float(valor), horario, int(sala)))
                             break
 
                         x += 1
 
-                #Deletar Ingresso  
+                # Deletar Ingresso
                 if int(userOpLogged) == 6:
                     # @params valor, horario, sala
                     venda = VendaIngresso()
@@ -858,7 +883,7 @@ if __name__ == "__main__":
                             break
 
                         x += 1
-                
+
                 # Editar de Sala
                 if int(userOpLogged) == 8:
                     sala = Sala()
@@ -884,18 +909,18 @@ if __name__ == "__main__":
 
                         x += 1
 
-                #Deletar Sala  
+                # Deletar Sala
                 if int(userOpLogged) == 9:
                     sala = Sala()
                     print(sala.find_all())
                     cod_sala = input("Insira o Código da Sala:")
                     print(sala.delete(int(cod_sala)))
-                
+
                 # Cadastro Cinema
                 if int(userOpLogged) == 10:
                     x = int(0)
                     txtCinema = ["Digite o nome do cinema:", "Digite a rua:",
-                                "Digite o bairro:", "Digite complemento:", "Digite o número:"]
+                                 "Digite o bairro:", "Digite complemento:", "Digite o número:"]
                     txtCinemaLength = len(txtCinema)
                     cinema = Cinema()
                     while x < txtCinemaLength:
@@ -918,9 +943,9 @@ if __name__ == "__main__":
                 if int(userOpLogged) == 11:
                     x = int(0)
                     cinema = Cinema()
-                    print(cinema.find_all());
+                    print(cinema.find_all())
                     txtCinema = ["Digite o Código do Cinema:", "Digite o nome do cinema:", "Digite a rua:",
-                                "Digite o bairro:", "Digite complemento:", "Digite o número:"]
+                                 "Digite o bairro:", "Digite complemento:", "Digite o número:"]
                     txtCinemaLength = len(txtCinema)
                     while x < txtCinemaLength:
                         if x == 0:
@@ -950,7 +975,7 @@ if __name__ == "__main__":
                     x = int(0)
                     sessao = Sessao()
                     txtSessao = ["Digite o número da sala:", "Digite a hora sessão:",
-                                "Digite a data da sessão:", "Digite a faixa etaria:"]
+                                 "Digite a data da sessão:", "Digite a faixa etaria:"]
                     txtSessaoLength = len(txtSessao)
                     while x < txtSessaoLength:
                         if x == 0:
@@ -976,14 +1001,13 @@ if __name__ == "__main__":
                             break
                         x += 1
 
-
                 # Editar Sessao
                 if int(userOpLogged) == 14:
                     x = int(0)
                     sessao = Sessao()
                     print(sessao.find_all())
                     txtSessao = ["Digite o código da sessão:", "Digite o número da sala:", "Digite a hora sessão:",
-                                "Digite a data da sessão:", "Digite a faixa etaria:"]
+                                 "Digite a data da sessão:", "Digite a faixa etaria:"]
                     txtSessaoLength = len(txtSessao)
                     while x < txtSessaoLength:
                         if x == 0:
@@ -1023,7 +1047,7 @@ if __name__ == "__main__":
                     filme = Filme()
                     cinema_passa_filme = CinemaPassaFilme()
                     txtCPF = ["Digite o id do cinema:", "Digite o id da sessão:",
-                                "Digite o id do filme:"]
+                              "Digite o id do filme:"]
                     txtCPFLength = len(txtCPF)
                     while x < txtCPFLength:
                         if x == 0:
@@ -1047,8 +1071,8 @@ if __name__ == "__main__":
                     cinema = Cinema()
                     filme = Filme()
                     cinema_passa_filme = CinemaPassaFilme()
-                    txtCPF = ["Digite o id do Item que deseja editar:","Digite o id do cinema:", "Digite o id da sessão:",
-                                "Digite o id do filme:"]
+                    txtCPF = ["Digite o id do Item que deseja editar:", "Digite o id do cinema:", "Digite o id da sessão:",
+                              "Digite o id do filme:"]
                     txtCPFLength = len(txtCPF)
                     while x < txtCPFLength:
                         if x == 0:

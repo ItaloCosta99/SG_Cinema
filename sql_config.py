@@ -67,11 +67,13 @@ CREATE TABLE IF NOT EXISTS cinema(
   cod_cinema SMALLSERIAL PRIMARY KEY,
   nome VARCHAR(50),
   rua VARCHAR(40),
+  bairro VARCHAR(40),
   complemento VARCHAR(40),
   numero int
 );
 
 CREATE TABLE IF NOT EXISTS cinema_passa_filme(
+  id_cinema_passa_filme SMALLSERIAL PRIMARY KEY, 
   id_cinema int,
   id_filme int,
   id_sessao int,

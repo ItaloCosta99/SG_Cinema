@@ -1,4 +1,5 @@
 .vscode/settings.json
+.vscode/launch.json
 .venv/pyvenv.cfg
 .venv/Lib/site-packages/autopep8.py
 .venv/Lib/site-packages/cycler.py

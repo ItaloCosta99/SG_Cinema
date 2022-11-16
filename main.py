@@ -208,7 +208,8 @@ class Filme(Connection):
             sql_s = f"SELECT * FROM filme WHERE cod_filme = '{cod_filme}'"
             if not self.query(sql_s):
                 return "Filme não encontrado"
-            sql_d = f"DELETE FROM filme WHERE cod_filme = '{cod_filme}'"
+            sql_d = f"""DELETE FROM cinema_passa_filme WHERE id_filme = '{cod_filme}';
+            DELETE FROM filme WHERE cod_filme = '{cod_filme}'"""
             self.execute(sql_d)
             self.commit()
             return "Filme deletado"
@@ -441,7 +442,7 @@ class Sessao(Connection):
             sql_s = "SELECT * FROM sessao WHERE cod_sessao = '{cod_sessao}'"
             if not self.query(sql_s):
                 return "Cinema não encontrada"
-            sql_d = f"DELETE FROM Cinema WHERE cod_sessao = '{cod_sessao}'"
+            sql_d = f"DELETE FROM cinema_passa_filme WHERE id_sessao = '{cod_sessao}';DELETE FROM sessao WHERE cod_sessao = '{cod_sessao}'"
             self.execute(sql_d)
             self.commit()
             return "Sessão deletado"
@@ -516,7 +517,7 @@ class Cinema(Connection):
             sql_s = f"SELECT * FROM cinema WHERE cod_cinema = '{cod_cinema}'"
             if not self.query(sql_s):
                 return "Cinema não encontrada"
-            sql_d = f"DELETE FROM Cinema WHERE cod_cinema = '{cod_cinema}'"
+            sql_d = f"""DELETE FROM cinema_passa_filme WHERE id_cinema = '{cod_cinema}'; DELETE FROM cinema WHERE cod_cinema = '{cod_cinema}'"""
             self.execute(sql_d)
             self.commit()
             return "Cinema deletado"

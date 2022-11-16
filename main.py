@@ -150,10 +150,10 @@ class Usuario(Connection):
         try:
             sql = "SELECT * FROM usuario"
             data = self.query(sql)
-            lines = ""
+            lines = "\n"
             if data:
                 for line in data:
-                    lines += "CPF: {0[0]} | Nome: {0[1]} | Senha: {0[2]} | Rua: {0[3]} | Bairro: {0[4]} | Complemento: {0[5]} | Número: {0[6]}".format(
+                    lines += "CPF: {0[0]} | Nome: {0[1]} | Senha: {0[2]} | Rua: {0[3]} | Bairro: {0[4]} | Complemento: {0[5]} | Número: {0[6]}\n".format(
                         line)
                 return lines
             return "Usuário não encontrado"
@@ -317,14 +317,14 @@ class VendaIngresso(Connection):
         try:
             sql = "SELECT * FROM venda_ingresso"
             data = self.query(sql)
-            lines = ""
+            lines = "\n"
             if data:
                 for line in data:
                     valorInteriaFormatado = "R${:,.2f}".format(line[1]).replace(
                         ",", "X").replace(".", ",").replace("X", ".")
-                    valorMeiaFormatado = "R${:,.2f}".format(line[1]).replace(
+                    valorMeiaFormatado = "R${:,.2f}".format(line[2]).replace(
                         ",", "X").replace(".", ",").replace("X", ".")
-                    lines += "Cod: {0[0]} | Valor Inteira: {1} | Valor Meia: {2} | Horário: {0[3]} | Sala: {0[4]}".format(
+                    lines += "Cod: {0[0]} | Valor Inteira: {1} | Valor Meia: {2} | Horário: {0[3]} | Sala: {0[4]}\n".format(
                         line, valorInteriaFormatado, valorMeiaFormatado)
                 return lines
             return "Vendas não encontradas"
@@ -386,10 +386,10 @@ class Sala(Connection):
         try:
             sql = "SELECT * FROM sala"
             data = self.query(sql)
-            lines = ""
+            lines = "\n"
             if data:
                 for line in data:
-                    lines += "Cod: {0[0]} | Capacidade Máxima: {0[1]} | Categoria: {0[2]}".format(
+                    lines += "Cod: {0[0]} | Capacidade Máxima: {0[1]} | Categoria: {0[2]}\n".format(
                         line)
                 return lines
             return "Salas não encontradas"
@@ -547,10 +547,10 @@ class Cinema(Connection):
         try:
             sql = "SELECT * FROM cinema"
             data = self.query(sql)
-            lines = ""
+            lines = "\n"
             if data:
                 for line in data:
-                    lines += "Cod: {0[0]} | Nome: {0[1]} | Rua: {0[2]} | Bairro: {0[3]} | Complemento: {0[4]} | Número: {0[5]}".format(
+                    lines += "Cod: {0[0]} | Nome: {0[1]} | Rua: {0[2]} | Bairro: {0[3]} | Complemento: {0[4]} | Número: {0[5]}\n".format(
                         line)
                 return lines
             return "Cinema não encontrado"
@@ -624,10 +624,10 @@ class CinemaPassaFilme(Connection):
         try:
             sql = "SELECT * FROM cinema_passa_filme"
             data = self.query(sql)
-            lines = ""
+            lines = "\n"
             if data:
                 for line in data:
-                    lines += "Cod: {0[0]} | Id_Cinema: {0[1]} | Id_Filme: {0[2]} | Id_Sessao: {0[3]}".format(
+                    lines += "Cod: {0[0]} | Id_Cinema: {0[1]} | Id_Filme: {0[2]} | Id_Sessao: {0[3]}\n".format(
                         line)
                 return lines
             return "Cinema passa filme não encontrado"

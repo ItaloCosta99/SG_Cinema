@@ -691,9 +691,9 @@ if __name__ == "__main__":
                             cargo = input("Insira o seu cargo:")
                             print(user.insert(nome, cpf, senha, rua, bairro,
                                               int(numero), complemento))
-                            print(user.insertTipo(tipo_usuario, cargo, cpf))
+                            user.insertTipo(tipo_usuario, cargo, cpf)
                             for v in range(int(qtd_tel)):
-                                print(user.insertTel(tel_numero, cpf))
+                                user.insertTel(tel_numero, cpf)
                             break
 
                     x += 1
@@ -722,7 +722,7 @@ if __name__ == "__main__":
             userOpLogged = int(1)
 
             while userOpLogged != 0:
-                print("""\n1 - Cadastrar Filme\n2 - Editar Filme\n3 - Deletar Filme\n4 - Exibir Filmes\n5 - Cadastrar Ingresso\n6 - Editar Ingresso\n7 - Deletar Ingresso\n8 - Exibir Ingresso\n9 - Cadastrar Sala\n10 - Editar Sala\n11 - Deletar Sala\n12 - Exibir Salas\n13 - Cadastrar Cinema\n14 - Editar Cinema\n15 - Deletar Cinema\n16 Exibir Cinemas\n17 - Cadastrar Sessão\n18 - Editar Sessão\n19 - Deletar Sessão\n20 - Exibir Sessões\n21 - Cadastrar Filme em um Cinema\n22 - Editar Filme em um Cinema\n23 - Deletar Filme em um Cinema\n24 - Exibir Filmes em Cinemas\n0 - Voltar para o menu inicial""")
+                print("""\n1 - Cadastrar Filme\n2 - Editar Filme\n3 - Deletar Filme\n4 - Exibir Filmes\n5 - Cadastrar Ingresso\n6 - Editar Ingresso\n7 - Deletar Ingresso\n8 - Exibir Ingresso\n9 - Cadastrar Sala\n10 - Editar Sala\n11 - Deletar Sala\n12 - Exibir Salas\n13 - Cadastrar Cinema\n14 - Editar Cinema\n15 - Deletar Cinema\n16 - Exibir Cinemas\n17 - Cadastrar Sessão\n18 - Editar Sessão\n19 - Deletar Sessão\n20 - Exibir Sessões\n21 - Cadastrar Filme em um Cinema\n22 - Editar Filme em um Cinema\n23 - Deletar Filme em um Cinema\n24 - Exibir Filmes em Cinemas\n0 - Voltar para o menu inicial""")
                 userOpLogged = input("Escolha uma opção: ")
 
                 # Cadastro de Filme

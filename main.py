@@ -7,7 +7,6 @@ successString = "Cadastrado com sucesso..."
 
 # Classe de configurações
 
-
 class Config:
     def __init__(self):
         self.configs = {
@@ -21,8 +20,6 @@ class Config:
         }
 
 # Classe de Conexão com o banco
-
-
 class Connection(Config):
     def __init__(self):
         Config.__init__(self)
@@ -72,8 +69,8 @@ class Usuario(Connection):
     def create(self, *args):
         try:
             sql = """CREATE TABLE IF NOT EXISTS usuario(
+                  cpf BIGINT,
                   nome VARCHAR(100),
-                  cpf VARCHAR(11),
                   senha VARCHAR(20) UNIQUE,
                   rua VARCHAR(80),
                   bairro VARCHAR(40),
@@ -91,7 +88,6 @@ class Usuario(Connection):
         try:
             sql = "INSERT INTO usuario (nome, cpf, senha, rua, bairro, numero, complemento) VALUES (%s, %s, %s, %s, %s, %s, %s)"
             self.execute(sql, args)
-            self.commit()
             return successString
         except Exception as e:
             print("Inserir Usuário", errorString, e)
@@ -101,7 +97,6 @@ class Usuario(Connection):
         try:
             sql = "INSERT INTO telefone (num_tel, cpf_usuario) VALUES (%s, %s)"
             self.execute(sql, args)
-            self.commit()
         except Exception as e:
             print("Inserir Telefone", errorString, e)
 
@@ -132,8 +127,8 @@ class Usuario(Connection):
 
     def update(self, cpf, *args):
         try:
-            sql = f"UPDATE usuario SET nome = %s WHERE cpf = {cpf}"
-            self.execute(sql, args)
+            sql = "UPDATE usuario SET nome = %s, senha = %s, rua = %s, bairro = %s, numero = %s, complemento = %s WHERE cpf = %s"
+            self.execute(sql, args + (cpf,))
             self.commit()
             return f"Dados Atualizados do Usuario do CPF: {cpf}"
         except Exception as e:
@@ -141,7 +136,7 @@ class Usuario(Connection):
 
     def search(self, *args, type_s="nome"):
         try:
-            sql = "SELECT * FROM usuario WHERE nome LIKE %s"
+            sql = "SELECT * FROM usuario WHERE nome LIKE '%{0[0]}%'"
             if type_s == "cpf":
                 sql = "SELECT * FROM usuario WHERE cpf = %s"
             data = self.query(sql, args)
@@ -245,10 +240,10 @@ class Filme(Connection):
         try:
             sql = "SELECT * FROM filme"
             data = self.query(sql)
-            lines = ""
+            lines = "\n"
             if data:
                 for line in data:
-                    lines += "Cod: {0[0]} | Título: {0[1]} | Dublagem: {0[2]} | Legenda: {0[3]} | Duração: {0[4]} | Direção: {0[5]} | Gênero: {0[6]}".format(
+                    lines += "Cod: {0[0]} | Título: {0[1]} | Dublagem: {0[2]} | Legenda: {0[3]} | Duração: {0[4]} | Direção: {0[5]} | Gênero: {0[6]}\n".format(
                         line)
                 return lines
             return "Filme não encontrado"
@@ -268,7 +263,7 @@ class VendaIngresso(Connection):
             sql = """CREATE TABLE IF NOT EXISTS venda_ingresso(
                     cod_venda SMALLSERIAL PRIMARY KEY,
                     valor DOUBLE PRECISION CHECK (valor >= 10.0) DEFAULT 10.0,
-                    valor_meia DOUBLE PRECISION DEFAULT (valor / 2)
+                    valor_meia DOUBLE PRECISION GENERATED ALWAYS AS (valor / 2) STORED,
                     horario TIME,
                     sala int
                   )"""
@@ -476,10 +471,10 @@ class Sessao(Connection):
         try:
             sql = "SELECT * FROM sessao"
             data = self.query(sql)
-            lines = ""
+            lines = "\n"
             if data:
                 for line in data:
-                    lines += "Cod: {0[0]} | N° Sala: {0[1]} | Hora: {0[2]} | Data: {0[3]} | Faixa Etária: {0[4]} | Número: {0[5]}".format(
+                    lines += "Cod: {0[0]} | N° Sala: {0[1]} | Hora: {0[2]} | Data: {0[3]} | Faixa Etária: {0[4]}\n".format(
                         line)
                 return lines
             return "Sessão não encontrado"
@@ -509,7 +504,7 @@ class Cinema(Connection):
 
     def insert(self, *args):
         try:
-            sql = "INSERT INTO cinema (nome, rua, complemento, numero) VALUES (%s, %s, %s, %s)"
+            sql = "INSERT INTO cinema (nome, rua, bairro, complemento, numero) VALUES (%s, %s, %s, %s, %s)"
             self.execute(sql, args)
             self.commit()
             return successString
@@ -571,6 +566,7 @@ class CinemaPassaFilme(Connection):
         # categoria é um tipo personalizado, trata-se de um enum(lista) com os valores: standard, imax e deluxe
         try:
             sql = """CREATE TABLE IF NOT EXISTS cinema_passa_filme(
+                id_cinema_passa_filme SMALLSERIAL PRIMARY KEY,
                 id_cinema int,
                 id_filme int,
                 id_sessao int,
@@ -694,7 +690,7 @@ if __name__ == "__main__":
                             cargo = input("Insira o seu cargo:")
                             print(user.insert(nome, cpf, senha, rua, bairro,
                                               int(numero), complemento))
-                            print(user.insertTipo(tipo_usuario, cpf, cargo))
+                            print(user.insertTipo(tipo_usuario, cargo, cpf))
                             for v in range(int(qtd_tel)):
                                 print(user.insertTel(tel_numero, cpf))
                             break
@@ -725,7 +721,7 @@ if __name__ == "__main__":
             userOpLogged = int(1)
 
             while userOpLogged != 0:
-                print("""\n1 - Cadastrar Filme\n2 - Editar Filme\n3 - Deletar Filme\n4 - Cadastrar Ingresso\n5 - Editar Ingresso\n6 - Deletar Ingresso\n7 - Cadastrar Sala\n8 - Editar Sala\n9 - Deletar Sala\n10 - Cadastrar Cinema\n11 - Editar Cinema\n12 - Deletar Cinema\n13 - Cadastrar Sessão\n14 - Editar Sessão\n15 - Deletar Sessão\n16 - Cadastrar Filme em um Cinema\n17 - Editar Filme em um Cinema\n18 - Deletar Filme em um Cinema\n0 - Voltar para o menu inicial""")
+                print("""\n1 - Cadastrar Filme\n2 - Editar Filme\n3 - Deletar Filme\n4 - Exibir Filmes\n5 - Cadastrar Ingresso\n6 - Editar Ingresso\n7 - Deletar Ingresso\n8 - Exibir Ingresso\n9 - Cadastrar Sala\n10 - Editar Sala\n11 - Deletar Sala\n12 - Exibir Salas\n13 - Cadastrar Cinema\n14 - Editar Cinema\n15 - Deletar Cinema\n16 Exibir Cinemas\n17 - Cadastrar Sessão\n18 - Editar Sessão\n19 - Deletar Sessão\n20 - Exibir Sessões\n21 - Cadastrar Filme em um Cinema\n22 - Editar Filme em um Cinema\n23 - Deletar Filme em um Cinema\n24 - Exibir Filmes em Cinemas\n0 - Voltar para o menu inicial""")
                 userOpLogged = input("Escolha uma opção: ")
 
                 # Cadastro de Filme
@@ -796,8 +792,13 @@ if __name__ == "__main__":
                     cod_filme = input("Insira o Código do Filme")
                     print(movie.delete(int(cod_filme)))
 
-                # Cadastrar Ingresso
+                # Exibir Filmes
                 if int(userOpLogged) == 4:
+                    movie = Filme()
+                    print(movie.find_all())
+
+                # Cadastrar Ingresso
+                if int(userOpLogged) == 5:
                     # @params valor, horario, sala
                     x = int(0)
                     txtVenda = ["Digite o valor do ingresso:",
@@ -823,7 +824,7 @@ if __name__ == "__main__":
                         x += 1
 
                 # Editar Ingresso
-                if int(userOpLogged) == 5:
+                if int(userOpLogged) == 6:
                     # @params valor, horario, sala
                     venda = VendaIngresso()
                     print(venda.find_all())
@@ -853,15 +854,20 @@ if __name__ == "__main__":
                         x += 1
 
                 # Deletar Ingresso
-                if int(userOpLogged) == 6:
+                if int(userOpLogged) == 7:
                     # @params valor, horario, sala
                     venda = VendaIngresso()
                     print(venda.find_all())
-                    cod_filme = input("Insira o Código do Ingresso")
-                    print(venda.delete(int(cod_filme)))
+                    cod_ingresso = input("Insira o Código do Ingresso")
+                    print(venda.delete(int(cod_ingresso)))
+                
+                #Exibir Ingressos
+                if int(userOpLogged) == 8:
+                    venda = VendaIngresso()
+                    print(venda.find_all())
 
                 # Cadastro de Sala
-                if int(userOpLogged) == 7:
+                if int(userOpLogged) == 9:
                     x = int(0)
                     objCategorias = {1: 'imax', 2: 'standard', 3: 'deluxe'}
                     txtSala = ["Digite o código da sala:",
@@ -885,7 +891,7 @@ if __name__ == "__main__":
                         x += 1
 
                 # Editar de Sala
-                if int(userOpLogged) == 8:
+                if int(userOpLogged) == 10:
                     sala = Sala()
                     print(sala.find_all())
                     x = int(0)
@@ -910,14 +916,19 @@ if __name__ == "__main__":
                         x += 1
 
                 # Deletar Sala
-                if int(userOpLogged) == 9:
+                if int(userOpLogged) == 11:
                     sala = Sala()
                     print(sala.find_all())
                     cod_sala = input("Insira o Código da Sala:")
                     print(sala.delete(int(cod_sala)))
+                
+                #Exibir Salas
+                if int(userOpLogged) == 12:
+                    sala = Sala()
+                    print(sala.find_all())
 
                 # Cadastro Cinema
-                if int(userOpLogged) == 10:
+                if int(userOpLogged) == 13:
                     x = int(0)
                     txtCinema = ["Digite o nome do cinema:", "Digite a rua:",
                                  "Digite o bairro:", "Digite complemento:", "Digite o número:"]
@@ -940,7 +951,7 @@ if __name__ == "__main__":
                         x += 1
 
                 # Editar Cinema
-                if int(userOpLogged) == 11:
+                if int(userOpLogged) == 14:
                     x = int(0)
                     cinema = Cinema()
                     print(cinema.find_all())
@@ -964,14 +975,19 @@ if __name__ == "__main__":
                         x += 1
 
                 # Deletar Cinema
-                if int(userOpLogged) == 12:
+                if int(userOpLogged) == 15:
                     cinema = Cinema()
                     print(cinema.find_all())
                     cod_cinema = input("Insira o Código da Sala:")
                     print(cinema.delete(int(cod_cinema)))
+                
+                #Exibir Cinemas
+                if int(userOpLogged) == 16:
+                    cinema = Cinema()
+                    print(cinema.find_all())
 
                 # Cadastrar Sessao
-                if int(userOpLogged) == 13:
+                if int(userOpLogged) == 17:
                     x = int(0)
                     sessao = Sessao()
                     txtSessao = ["Digite o número da sala:", "Digite a hora sessão:",
@@ -994,15 +1010,13 @@ if __name__ == "__main__":
                             dt_sessao = f'{int(y):04d}-{int(m):02d}-{int(d):02d}'
                         if x == 3:
                             faixa_etaria = input(txtSessao[x])
-                            print(sessao.insert(nome, hr_sessao,
+                            print(sessao.insert(num_sala, hr_sessao,
                                   dt_sessao, faixa_etaria))
-                            print(cinema_passa_filme.insert(int(id_cinema), id_filme,
-                                  id_sessao))
                             break
                         x += 1
 
                 # Editar Sessao
-                if int(userOpLogged) == 14:
+                if int(userOpLogged) == 18:
                     x = int(0)
                     sessao = Sessao()
                     print(sessao.find_all())
@@ -1033,14 +1047,19 @@ if __name__ == "__main__":
                             break
                         x += 1
                 # Deletar Sessao
-                if int(userOpLogged) == 15:
+                if int(userOpLogged) == 19:
                     sessao = Sessao()
                     print(sessao.find_all())
                     cod_sessao = input("Insira o Código da Sessão:")
                     print(sessao.delete(int(cod_sessao)))
 
+                #Exibir Sessões
+                if int(userOpLogged) == 20:
+                    sessao = Sessao()
+                    print(sessao.find_all())
+
                 # Cadastrar Cinema Passa Filme
-                if int(userOpLogged) == 16:
+                if int(userOpLogged) == 21:
                     x = int(0)
                     sessao = Sessao()
                     cinema = Cinema()
@@ -1051,12 +1070,15 @@ if __name__ == "__main__":
                     txtCPFLength = len(txtCPF)
                     while x < txtCPFLength:
                         if x == 0:
+                            if cinema.find_all() == "Cinema não encontrado": print("Cadastre um Cinema"); break
                             print(cinema.find_all())
                             id_cinema = input(txtCPF[x])
                         if x == 1:
+                            if sessao.find_all() == "Sessão não encontrado": print("Cadastre uma Sessão"); break
                             print(sessao.find_all())
                             id_sessao = input(txtCPF[x])
                         if x == 2:
+                            if filme.find_all() == "Filme não encontrado": print("Cadastre um filme"); break
                             print(filme.find_all())
                             id_filme = input(txtCPF[x])
                             print(cinema_passa_filme.insert(int(id_cinema), int(id_filme),
@@ -1065,7 +1087,7 @@ if __name__ == "__main__":
                         x += 1
 
                 # Editar Cinema Passa Filme
-                if int(userOpLogged) == 17:
+                if int(userOpLogged) == 22:
                     x = int(0)
                     sessao = Sessao()
                     cinema = Cinema()
@@ -1093,11 +1115,17 @@ if __name__ == "__main__":
                         x += 1
 
                 # Deletar Cinema Passa Filme
-                if int(userOpLogged) == 18:
+                if int(userOpLogged) == 23:
                     cinema_passa_filme = CinemaPassaFilme()
                     print(cinema_passa_filme.find_all())
                     id_item = input("Insira o id que deseja deletar:")
                     print(sessao.delete(int(id_item)))
+                
+                #Exibir Filmes em um Cinema
+
+                if int(userOpLogged) == 24:
+                    cinema_passa_filme = CinemaPassaFilme()
+                    print(cinema_passa_filme.find_all())
                 # Sair
                 if int(userOpLogged) == 0:
                     print("Encerrando...")
